@@ -22,7 +22,7 @@ public :
    TTree          *fChain;   //!pointer to the analyzed TTree or TChain
    Int_t           fCurrent; //!current Tree number in a TChain
    std::string     method_name; //!
-   TFile          *output_file; //!
+   TDirectory          *output_file; //!
    SimpleHistSVC  *histSvc; //!
    double          start_time; //!
    double          end_time; //!
@@ -73,7 +73,7 @@ public :
    virtual void     Loop(int entries_debug=-1);
    virtual Bool_t   Notify();
    virtual void     Show(Long64_t entry = -1);
-   virtual void     ChangeFile(TTree *tree, TFile *file);
+   virtual void     ChangeFile(TTree *tree, TDirectory *file);
    virtual void     WriteToFile();
    virtual void     FillHists();
    virtual bool     Cut_time();

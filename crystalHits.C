@@ -4,7 +4,7 @@
 #include <TCanvas.h>
 #include <iostream>
 using namespace std;
-void crystalHits::ChangeFile(TTree * tree, TFile * file){
+void crystalHits::ChangeFile(TTree * tree, TDirectory * file){
    fChain = tree;
    output_file = file;   
    Init(tree);

@@ -56,7 +56,7 @@ void SimpleHistSVC::BookFillHist(std::string name, int nbinsX, float startX, flo
     hist->Fill(x,y);
 }
 
-void SimpleHistSVC::BookFile(TFile *file) {
+void SimpleHistSVC::BookFile(TDirectory *file) {
     output_file = file;
 }
 

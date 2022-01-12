@@ -11,7 +11,7 @@ class SimpleHistSVC {
         std::map<std::string,TH1F *> histsDB_1d;
         std::map<std::string,TH2F *> histsDB_2d;
         std::string processName;
-        TFile *output_file;    
+        TDirectory *output_file;    
     
     public:
         SimpleHistSVC();
@@ -20,7 +20,7 @@ class SimpleHistSVC {
         void BookFillHist(std::string name, int nbinsX, float startX, float endX, int nbinsY, float startY, float endY,float x, float y);
         void SetProcessTag(std::string name);
         void Init();
-        void BookFile(TFile *file);
+        void BookFile(TDirectory *file);
         void Write();
         
 
