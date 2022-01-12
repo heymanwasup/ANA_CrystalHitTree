@@ -24,6 +24,9 @@ public :
    std::string     method_name; //!
    TFile          *output_file; //!
    SimpleHistSVC  *histSvc; //!
+   double          start_time; //!
+   double          end_time; //!
+   bool            isXtalHitTree; //!
    
 
 
@@ -67,7 +70,7 @@ public :
    virtual Int_t    GetEntry(Long64_t entry);
    virtual Long64_t LoadTree(Long64_t entry);
    virtual void     Init(TTree *tree);
-   virtual void     Loop();
+   virtual void     Loop(int entries_debug=-1);
    virtual Bool_t   Notify();
    virtual void     Show(Long64_t entry = -1);
    virtual void     ChangeFile(TTree *tree, TFile *file);

@@ -3,6 +3,7 @@
 #include <TStyle.h>
 #include <TCanvas.h>
 #include <iostream>
+using namespace std;
 void crystalHits::ChangeFile(TTree * tree, TFile * file){
    fChain = tree;
    output_file = file;   
@@ -17,50 +18,65 @@ void crystalHits::WriteToFile() {
    // delete histSvc;
 }
 
-void crystalHits::Loop()
+void crystalHits::Loop(int entries_debug)
 {
    if (fChain == 0) return;   
    
    Long64_t nentries = fChain->GetEntriesFast();      
+   if(entries_debug!=-1){
+      nentries = entries_debug;
+   }
    
    Long64_t nbytes = 0, nb = 0;
+
+   std::string histName;
    for (Long64_t jentry=0; jentry<nentries;jentry++) {
       
       Long64_t ientry = LoadTree(jentry);
       
+
       if (ientry < 0) break;
       nb = fChain->GetEntry(jentry);   nbytes += nb;
       if (jentry%100000==0) std::cout << "processed " << jentry << " events" << std::endl;
+      if(entries_debug!=-1){
+         cout <<"Calo"<< caloNum << " xtal" << xtalNum << "  event "<< eventNum <<"     island "<< islandNum << endl;
+      }
+      if(!Cut_time()) continue;
       
       std::string calo_tag = std::to_string(caloNum);
       std::string xstal_tag = std::to_string(xtalNum);
-      //overall            
-      histSvc->SetProcessTag(std::string("hist"));
-      FillHists();
+      // //overall            
+      // histSvc->SetProcessTag(std::string("hist"));
+      // FillHists();
 
-      //set calorimeter info
-      histSvc->SetProcessTag(std::string("hist_calo") + calo_tag);
-      FillHists();
+      // //set calorimeter info
+      // histSvc->SetProcessTag(std::string("hist_calo") + calo_tag);
+      // FillHists();
 
-      //set calorimeter and xtal info
-      histSvc->SetProcessTag(std::string("hist_calo") + calo_tag + std::string("_xtal") + xstal_tag);
-      FillHists();
+      // //set calorimeter and xtal info
+      // histSvc->SetProcessTag(std::string("hist_calo") + calo_tag + std::string("_xtal") + xstal_tag);
+      // FillHists();
 
       //Pass time cut
-      if(Cut_time()) {
-         //overall            
-         histSvc->SetProcessTag(std::string("hist_timewindow"));
-         FillHists();
-
-         //set calorimeter info
-         histSvc->SetProcessTag(std::string("hist_timewindow_calo") + calo_tag);
-         FillHists();
-
-         //set calorimeter and xtal info
-         histSvc->SetProcessTag(std::string("hist_timewindow_calo") + calo_tag + std::string("_xtal") + xstal_tag);
-         FillHists();
-      }
       
+      //overall for cluster tree      
+      histName = std::string("hist_timewindow");
+      histSvc->SetProcessTag(histName);
+      histSvc->BookFillHist("energy",6200,0,6200,energy); // MeV
+      if(!isXtalHitTree) {   
+         histSvc->BookFillHist("energy_time",5000,0,0.1492*5000,6200,0,6200,(time-start_time)*1.25/1.e3,energy/1.e3); //\mu s, GeV for pileup study
+      }
+
+      // //set calorimeter info
+      // histSvc->SetProcessTag(std::string("hist_timewindow_calo") + calo_tag);
+      // FillHists();
+
+      //set calorimeter and xtal info
+      histName = std::string("hist_timewindow_calo") + calo_tag + std::string("_xtal") + xstal_tag;
+      histSvc->SetProcessTag(histName);
+      // histSvc->BookFillHist("time",5000,0,0.1492*5000,time/1.e3); // \mu s
+      histSvc->BookFillHist("energy",6200,0,6200,energy); // MeV
+      // FillHists();
    }
 }
 
@@ -75,32 +91,41 @@ void crystalHits::FillHists() {
 }
 
 bool crystalHits::Cut_time() {
-   bool pass = false;
-   float start;
-   float end;
    
-   unsigned long len = method_name.length();
-   if(method_name.find("islandFitDAQ")<len) {
-      start = 50*1.e3;
-      end = 550*1.e3;
-   } 
-   else if (method_name.find("inFillGainCorrector")<len) {
-      start = -50*1.e3;
-      end = 450*1.e3;
-   }
-   else {
+   if(isXtalHitTree && laserHit) { 
       return false;
    }
-
-   if(time>start && time<end) {
-      pass = true;
+   bool pass = false;   
+   if(time<start_time || time>end_time) {
+      return false;
    }
-   return pass;
+   return true;
 }
 
 crystalHits::crystalHits(std::string name) : 
    fChain(0),
-   method_name(name) {}
+   method_name(name) {
+      size_t len = method_name.length();
+      if(method_name.find("islandFitterDAQ")<len) {
+         start_time = 130*1.e3;
+         end_time = 660*1.e3;
+         isXtalHitTree = true;
+      } 
+      else if (method_name.find("inFillGainCorrector")<len) {
+         start_time = 30*1.e3;
+         end_time = 560*1.e3;
+         isXtalHitTree = true;
+      }
+      else if (method_name.find("hitClusterDAQ")<len) {
+         start_time = 30*1.e3;
+         end_time = 560*1.e3;
+         isXtalHitTree = false;
+      }
+      else {
+         cout << "method: " << method_name << endl;
+         throw std::string("unknow method");
+      }
+   }
 
 crystalHits::~crystalHits()
 {

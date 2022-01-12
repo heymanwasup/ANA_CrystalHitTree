@@ -1,4 +1,4 @@
-CXX       := g++
+CXX       := clang++
 INCLUDES  := $(shell root-config --cflags)
 LIBS  := $(shell root-config --glibs) 
 OBJ = main_readCrystalHits.o crystalHits.o SimpleHistSVC.o
