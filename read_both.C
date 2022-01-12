@@ -122,10 +122,11 @@ int main(int argc,char *argv[]) {
     int entries_debug = -1;
     entries_debug = atoi(config["events"].c_str());
     crystalHits analyser(config["hit_name"]);
+    dir->cd();
     analyser.ChangeFile(fChain,dir);
     analyser.Loop(entries_debug);
     analyser.WriteToFile();
-    output_file->Close();
+    dir->Close();
 
     return 0;
 }
