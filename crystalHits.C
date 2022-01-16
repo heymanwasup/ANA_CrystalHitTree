@@ -31,9 +31,8 @@ void crystalHits::Loop(int entries_debug)
 
    std::string histName;
    for (Long64_t jentry=0; jentry<nentries;jentry++) {
-      
+
       Long64_t ientry = LoadTree(jentry);
-      
 
       if (ientry < 0) break;
       nb = fChain->GetEntry(jentry);   nbytes += nb;
@@ -41,42 +40,55 @@ void crystalHits::Loop(int entries_debug)
       if(entries_debug!=-1){
          cout <<"Calo"<< caloNum << " xtal" << xtalNum << "  event "<< eventNum <<"     island "<< islandNum << endl;
       }
+      
       if(!Cut_time()) continue;
-      
+
       std::string calo_tag = std::to_string(caloNum);
-      std::string xstal_tag = std::to_string(xtalNum);
-      // //overall            
-      // histSvc->SetProcessTag(std::string("hist"));
-      // FillHists();
+      std::string xstal_tag = std::to_string(xtalNum);      
 
-      // //set calorimeter info
-      // histSvc->SetProcessTag(std::string("hist_calo") + calo_tag);
-      // FillHists();
-
-      // //set calorimeter and xtal info
-      // histSvc->SetProcessTag(std::string("hist_calo") + calo_tag + std::string("_xtal") + xstal_tag);
-      // FillHists();
-
-      //Pass time cut
-      
       //overall for cluster tree      
-      histName = std::string("hist_timewindow");
-      histSvc->SetProcessTag(histName);
-      histSvc->BookFillHist("energy",6200,0,6200,energy); // MeV
-      if(!isXtalHitTree) {   
-         histSvc->BookFillHist("energy_time",5000,0,0.1492*5000,6200,0,6200,(time-start_time)*1.25/1.e3,energy/1.e3); //\mu s, GeV for pileup study
+      
+      
+      // histograms for clustering tree:
+      // energy_time
+      // overall
+      // calo
+      // calo+xtal
+      if(!isXtalHitTree) {
+         //over all
+         histName = std::string("hist_timewindow_statusTrue");
+         histSvc->SetProcessTag(histName);
+         histSvc->BookFillHist("energy_time",5000,0,0.1492*5000,6200,0,6200,(time-start_time)*1.25/1.e3,energy/1.e3); //\mu s, GeV
+         //calo
+         histName = std::string("hist_timewindow_statusTrue_calo") + calo_tag;
+         histSvc->SetProcessTag(histName);   
+         histSvc->BookFillHist("energy_time",5000,0,0.1492*5000,6200,0,6200,(time-start_time)*1.25/1.e3,energy/1.e3); 
+         //calo + xtal
+         histName = std::string("hist_timewindow_statusTrue_calo") + calo_tag + std::string("_xtal") + xstal_tag;
+         histSvc->SetProcessTag(histName);   
+         histSvc->BookFillHist("energy_time",5000,0,0.1492*5000,6200,0,6200,(time-start_time)*1.25/1.e3,energy/1.e3); 
       }
 
-      // //set calorimeter info
-      // histSvc->SetProcessTag(std::string("hist_timewindow_calo") + calo_tag);
-      // FillHists();
 
-      //set calorimeter and xtal info
-      histName = std::string("hist_timewindow_calo") + calo_tag + std::string("_xtal") + xstal_tag;
-      histSvc->SetProcessTag(histName);
-      // histSvc->BookFillHist("time",5000,0,0.1492*5000,time/1.e3); // \mu s
-      histSvc->BookFillHist("energy",6200,0,6200,energy); // MeV
-      // FillHists();
+      //histograms for xtal hit tree:
+      //energy spectrum - overall 
+      //energy spectrum - calo+xtal
+      if(isXtalHitTree) {
+         if(useStatusCut && status!=1) continue;
+
+         std::string status_str = "True";
+         if(status!=1) {
+            status_str = "False";
+         }
+         //overall hists
+         histName = std::string("hist_timewindow_status") + status_str;
+         histSvc->SetProcessTag(histName);
+         histSvc->BookFillHist("energy",3000,0,3000,energy);
+         //calo+xtal info
+         histName = std::string("hist_timewindow_status") + status_str + std::string("_calo")+ calo_tag + std::string("_xtal") + xstal_tag;
+         histSvc->SetProcessTag(histName);
+         histSvc->BookFillHist("energy",3000,0,3000,energy);
+      }
    }
 }
 
@@ -104,7 +116,9 @@ bool crystalHits::Cut_time() {
 
 crystalHits::crystalHits(std::string name) : 
    fChain(0),
-   method_name(name) {
+   method_name(name),
+   useStatusCut(true)
+   {
       size_t len = method_name.length();
       if(method_name.find("islandFitterDAQ")<len) {
          start_time = 130*1.e3;

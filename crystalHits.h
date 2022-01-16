@@ -22,6 +22,7 @@ public :
    TTree          *fChain;   //!pointer to the analyzed TTree or TChain
    Int_t           fCurrent; //!current Tree number in a TChain
    std::string     method_name; //!
+   bool            useStatusCut; //!
    TDirectory          *output_file; //!
    SimpleHistSVC  *histSvc; //!
    double          start_time; //!
