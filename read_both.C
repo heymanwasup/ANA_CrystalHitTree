@@ -10,7 +10,7 @@
 
 
 using namespace std;
-bool useStatusCut = false;
+bool useStatusCut = true;
 
 
 void ShowUsage(string main_exe) {
@@ -67,8 +67,11 @@ int main(int argc,char *argv[]) {
     else if(config["hit_name"]=="hitClusterDAQ") {
         tree_name = "corClusterHitTree/clusters";
     }
+    else if(config["hit_name"]=="testCoincidenceFinder") {
+        tree_name = "testCoincidenceFinder/hist_cso";
+    }
     else{
-        cout <<" hit_name should be inFillGainCorrector or islandFitterDAQ or hitClusterDAQ" << endl;
+        cout <<" hit_name should be inFillGainCorrector or islandFitterDAQ or hitClusterDAQ or testCoincidenceFinder" << endl;
     }
 
     string file_list = config["input_list"];
@@ -102,6 +105,24 @@ int main(int argc,char *argv[]) {
     else{
         // cout << "here 1"<<endl;
         run_jobs = list_of_files;
+    }
+
+    if(config["hit_name"]=="testCoincidenceFinder") {
+        
+        TH1D * hist = nullptr;
+        for(string file_path : run_jobs) {
+            TFile * tempFile = TFile::Open(file_path.c_str());
+            TH1D * tempHist = (TH1D*)(tempFile->Get(tree_name.c_str())->Clone());
+            if(hist == nullptr) hist = tempHist;
+            else hist->Add(tempHist);
+        }
+        TFile * output_file = new TFile(config["output_file"].c_str(),"RECREATE");
+        TDirectory * dir = output_file->mkdir(config["hit_name"].c_str());
+        dir->cd();
+        hist->SetDirectory(dir);
+        hist->Write();
+        dir->Close();
+        return 0;
     }
 
     TChain * fChain = new TChain(tree_name.c_str());

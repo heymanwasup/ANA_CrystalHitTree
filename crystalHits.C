@@ -48,27 +48,30 @@ void crystalHits::Loop(int entries_debug)
 
       //overall for cluster tree      
       
-      
+      // cout << "debug 1 " << endl;
       // histograms for clustering tree:
       // energy_time
       // overall
       // calo
       // calo+xtal
       if(!isXtalHitTree) {
-         //over all
+         // over all, energy, energy_time
          histName = std::string("hist_timewindow_statusTrue");
          histSvc->SetProcessTag(histName);
-         histSvc->BookFillHist("energy_time",5000,0,0.1492*5000,6200,0,6200,(time-start_time)*1.25/1.e3,energy/1.e3); //\mu s, GeV
-         //calo
-         histName = std::string("hist_timewindow_statusTrue_calo") + calo_tag;
-         histSvc->SetProcessTag(histName);   
+         // histSvc->BookFillHist("energy_time",5000,0,0.1492*5000,6200,0,6200,(time-start_time)*1.25/1.e3,energy/1.e3); //\mu s, GeV
+         histSvc->BookFillHist("energy",3000,0,3000,energy);
          histSvc->BookFillHist("energy_time",5000,0,0.1492*5000,6200,0,6200,(time-start_time)*1.25/1.e3,energy/1.e3); 
-         //calo + xtal
+         //calo, energy, energy_time
+         histName = std::string("hist_timewindow_statusTrue_calo") + calo_tag;
+         histSvc->SetProcessTag(histName);
+         histSvc->BookFillHist("energy",3000,0,3000,energy);
+         // histSvc->BookFillHist("energy_time",5000,0,0.1492*5000,6200,0,6200,(time-start_time)*1.25/1.e3,energy/1.e3);
+         //calo + xtal, energy
          histName = std::string("hist_timewindow_statusTrue_calo") + calo_tag + std::string("_xtal") + xstal_tag;
          histSvc->SetProcessTag(histName);   
-         histSvc->BookFillHist("energy_time",5000,0,0.1492*5000,6200,0,6200,(time-start_time)*1.25/1.e3,energy/1.e3); 
+         histSvc->BookFillHist("energy",3000,0,3000,energy);
       }
-
+      // cout << "debug 3 " << endl;
 
       //histograms for xtal hit tree:
       //energy spectrum - overall 
