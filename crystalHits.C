@@ -60,15 +60,15 @@ void crystalHits::Loop(int entries_debug)
          histSvc->SetProcessTag(histName);
          // histSvc->BookFillHist("energy_time",5000,0,0.1492*5000,6200,0,6200,(time-start_time)*1.25/1.e3,energy/1.e3); //\mu s, GeV
          histSvc->BookFillHist("energy",3000,0,3000,energy);
-         histSvc->BookFillHist("energy_time",5000,0,0.1492*5000,6200,0,6200,(time-start_time)*1.25/1.e3,energy/1.e3); 
+         histSvc->BookFillHist("energy_time",5000,0,0.1492*5000,208,0,6.24,(time-start_time)*1.25/1.e3,energy/1.e3);
          //calo, energy, energy_time
          histName = std::string("hist_timewindow_statusTrue_calo") + calo_tag;
          histSvc->SetProcessTag(histName);
          histSvc->BookFillHist("energy",3000,0,3000,energy);
-         // histSvc->BookFillHist("energy_time",5000,0,0.1492*5000,6200,0,6200,(time-start_time)*1.25/1.e3,energy/1.e3);
+         // histSvc->BookFillHist("energy_time",5000,0,0.1492*5000,208,0,6.24,(time-start_time)*1.25/1.e3,energy/1.e3);
          //calo + xtal, energy
          histName = std::string("hist_timewindow_statusTrue_calo") + calo_tag + std::string("_xtal") + xstal_tag;
-         histSvc->SetProcessTag(histName);   
+         histSvc->SetProcessTag(histName);
          histSvc->BookFillHist("energy",3000,0,3000,energy);
       }
       // cout << "debug 3 " << endl;
@@ -124,17 +124,17 @@ crystalHits::crystalHits(std::string name) :
    {
       size_t len = method_name.length();
       if(method_name.find("islandFitterDAQ")<len) {
-         start_time = 130*1.e3;
+         start_time = 100*1.e3;
          end_time = 660*1.e3;
          isXtalHitTree = true;
       } 
       else if (method_name.find("inFillGainCorrector")<len) {
-         start_time = 30*1.e3;
+         start_time = 0*1.e3;
          end_time = 560*1.e3;
          isXtalHitTree = true;
       }
       else if (method_name.find("hitClusterDAQ")<len) {
-         start_time = 30*1.e3;
+         start_time = 0*1.e3;
          end_time = 560*1.e3;
          isXtalHitTree = false;
       }
