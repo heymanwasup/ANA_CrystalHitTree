@@ -11,7 +11,17 @@ class SimpleHistSVC {
         std::map<std::string,TH1F *> histsDB_1d;
         std::map<std::string,TH2F *> histsDB_2d;
         std::string processName;
+        int caloIndex;
+        int xtalIndex;
+        int hitStatus;
+        int timeTag;
+
+        std::string GetFullName(std::string name);
+
+
         TDirectory *output_file;    
+    private:
+        int default_int;
     
     public:
         SimpleHistSVC();
@@ -19,9 +29,15 @@ class SimpleHistSVC {
         void BookFillHist(std::string name, int nbins, float start, float end, float value);
         void BookFillHist(std::string name, int nbinsX, float startX, float endX, int nbinsY, float startY, float endY,float x, float y);
         void SetProcessTag(std::string name);
+        void SetCaloTag(int caloIndex);
+        void SetXtalTag(int xtalIndex);
+        void SetStatusTag(int hitStatus);
+        void SetTimeTag(int timeTag);
+        void InitNameTags();
         void Init();
         void BookFile(TDirectory *file);
         void Write();
+
         
 
 };

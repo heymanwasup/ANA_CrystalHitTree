@@ -7,15 +7,47 @@ using namespace std;
 void crystalHits::ChangeFile(TTree * tree, TDirectory * file){
    fChain = tree;
    output_file = file;   
-   Init(tree);
-   // std::cout <<"after init" <<std::endl;
+   Init(tree);   
    histSvc->BookFile(file);
-   // std::cout <<"after BookFile" <<std::endl;
+   
 }
 
 void crystalHits::WriteToFile() {
    histSvc->Write();
    // delete histSvc;
+}
+
+void crystalHits::AnaCrystalHits() {
+   if(timeTag==2) return;
+   histSvc->SetTimeTag(timeTag);
+   histSvc->SetStatusTag(status);
+   //overall hists   
+   histSvc->BookFillHist("energy",3000,0,3000,energy);
+   
+   //calo info
+   histSvc->SetCaloTag(caloNum);
+   histSvc->BookFillHist("energy",3000,0,3000,energy);
+   
+   //calo+xtal info
+   histSvc->SetXtalTag(xtalNum);   
+   histSvc->BookFillHist("energy",3000,0,3000,energy);
+}
+
+void crystalHits::AnaClusteredHits() {
+   
+   //E-t hist: all calos
+   histSvc->BookFillHist("energy_time",5000*6,0,0.1492*5000,208*3,0,6.24,time*1.25/1.e3,energy/1.e3);
+
+   if(timeTag==2) return;
+   
+   histSvc->SetTimeTag(timeTag);
+
+   //Energy spectrum: all calos   
+   histSvc->BookFillHist("energy",4000,0,4000,energy);
+
+   //Energy spectrum: each calo
+   histSvc->SetCaloTag(caloNum);
+   histSvc->BookFillHist("energy",4000,0,4000,energy);
 }
 
 void crystalHits::Loop(int entries_debug)
@@ -37,105 +69,70 @@ void crystalHits::Loop(int entries_debug)
       if (ientry < 0) break;
       nb = fChain->GetEntry(jentry);   nbytes += nb;
       if (jentry%100000==0) std::cout << "processed " << jentry << " events" << std::endl;
-      if(entries_debug!=-1){
-         cout <<"Calo"<< caloNum << " xtal" << xtalNum << "  event "<< eventNum <<"     island "<< islandNum << endl;
-      }
       
-      if(!Cut_time()) continue;
+      //exclude the laser hits
+      if(!Cut_laserHit()) continue;
 
-      std::string calo_tag = std::to_string(caloNum);
-      std::string xstal_tag = std::to_string(xtalNum);      
-
-      //overall for cluster tree      
-      
-      // cout << "debug 1 " << endl;
-      // histograms for clustering tree:
-      // energy_time
-      // overall
-      // calo
-      // calo+xtal
-      if(!isXtalHitTree) {
-         // over all, energy, energy_time
-         histName = std::string("hist_timewindow_statusTrue");
-         histSvc->SetProcessTag(histName);
-         // histSvc->BookFillHist("energy_time",5000,0,0.1492*5000,6200,0,6200,(time-start_time)*1.25/1.e3,energy/1.e3); //\mu s, GeV
-         histSvc->BookFillHist("energy",3000,0,3000,energy);
-         histSvc->BookFillHist("energy_time",5000*6,0,0.1492*5000,208,0,6.24,(time-start_time)*1.25/1.e3,energy/1.e3);
-         //calo, energy, energy_time
-         histName = std::string("hist_timewindow_statusTrue_calo") + calo_tag;
-         histSvc->SetProcessTag(histName);
-         histSvc->BookFillHist("energy",3000,0,3000,energy);
-         // histSvc->BookFillHist("energy_time",5000,0,0.1492*5000,208,0,6.24,(time-start_time)*1.25/1.e3,energy/1.e3);
-         //calo + xtal, energy
-         histName = std::string("hist_timewindow_statusTrue_calo") + calo_tag + std::string("_xtal") + xstal_tag;
-         histSvc->SetProcessTag(histName);
-         histSvc->BookFillHist("energy",3000,0,3000,energy);
+      double time_range = time*1.25-offset_time;
+      if(time_range<10.e3) {
+         timeTag = 1;
       }
-      // cout << "debug 3 " << endl;
+      else if(time_range<30.e3) {
+         timeTag = 2;  
+      }
+      else {
+         timeTag = 3;
+      }
 
-      //histograms for xtal hit tree:
-      //energy spectrum - overall 
-      //energy spectrum - calo+xtal
+      histSvc->InitNameTags();
+      histSvc->SetProcessTag("timewindow");
+      //xtal hits
       if(isXtalHitTree) {
          if(useStatusCut && status!=1) continue;
-
-         std::string status_str = "True";
-         if(status!=1) {
-            status_str = "False";
-         }
-         //overall hists
-         histName = std::string("hist_timewindow_status") + status_str;
-         histSvc->SetProcessTag(histName);
-         histSvc->BookFillHist("energy",3000,0,3000,energy);
-         //calo+xtal info
-         histName = std::string("hist_timewindow_status") + status_str + std::string("_calo")+ calo_tag + std::string("_xtal") + xstal_tag;
-         histSvc->SetProcessTag(histName);
-         histSvc->BookFillHist("energy",3000,0,3000,energy);
+         AnaCrystalHits();
+      }
+      //clustered hits
+      else {
+         AnaClusteredHits();
       }
    }
 }
 
-void crystalHits::FillHists() {
-      
-      histSvc->BookFillHist("energy",400,0,4000,energy);
-      
-      histSvc->BookFillHist("time",1000,-200*1e3,800*1e3,time);
-      
-      histSvc->BookFillHist("energy_time",400,0,4000,1000,-200*1e3,800*1e3,energy,time);
-      
-}
-
-bool crystalHits::Cut_time() {
+bool crystalHits::Cut_laserHit() {
    
    if(isXtalHitTree && laserHit) { 
       return false;
    }
-   bool pass = false;   
-   if(time<start_time || time>end_time) {
+
+   bool pass = false;
+   if(time*1.25<start_time || time*1.25>end_time) {
       return false;
    }
    return true;
 }
 
-crystalHits::crystalHits(std::string name) : 
+crystalHits::crystalHits(std::string name) :
    fChain(0),
    method_name(name),
    useStatusCut(true)
    {
       size_t len = method_name.length();
       if(method_name.find("islandFitterDAQ")<len) {
-         start_time = 130*1.e3;
-         end_time = 660*1.e3;
+         start_time = 100*1.e3;
+         end_time = 800*1.e3;
+         offset_time = 130.e3;
          isXtalHitTree = true;
       } 
       else if (method_name.find("inFillGainCorrector")<len) {
-         start_time = (30/1.25)*1.e3;
-         end_time = 560*1.e3;
+         start_time = 0;
+         end_time = 700*1.e3;
+         offset_time = 0.;
          isXtalHitTree = true;
       }
       else if (method_name.find("hitClusterDAQ")<len) {
-         start_time = (30/1.25)*1.e3;
-         end_time = 560*1.e3;
+         start_time = 0*1.e3;
+         end_time = 700*1.e3;
+         offset_time = 0.;
          isXtalHitTree = false;
       }
       else {
@@ -164,8 +161,7 @@ Long64_t crystalHits::LoadTree(Long64_t entry)
    Long64_t centry = fChain->LoadTree(entry);
    if (centry < 0) return centry;
    if (fChain->GetTreeNumber() != fCurrent) {
-      fCurrent = fChain->GetTreeNumber();
-      Notify();
+      fCurrent = fChain->GetTreeNumber();      
    }
    return centry;
 }
@@ -203,32 +199,5 @@ void crystalHits::Init(TTree *tree)
    fChain->SetBranchAddress("runNum", &runNum, &b_runNum);
    // std::cout << "new - " <<std::endl;
    histSvc = new SimpleHistSVC();
-   // std::cout << "new + " <<std::endl;
-   Notify();
-}
-
-Bool_t crystalHits::Notify()
-{
-   // The Notify() function is called when a new file is opened. This
-   // can be either for a new TTree in a TChain or when when a new TTree
-   // is started when using PROOF. It is normally not necessary to make changes
-   // to the generated code, but the routine can be extended by the
-   // user if needed. The return value is currently not used.
-
-   return kTRUE;
-}
-
-void crystalHits::Show(Long64_t entry)
-{
-// Print contents of entry.
-// If entry is not specified, print current entry
-   if (!fChain) return;
-   fChain->Show(entry);
-}
-Int_t crystalHits::Cut(Long64_t entry)
-{
-// This function may be called from Loop.
-// returns  1 if entry is accepted.
-// returns -1 otherwise.
-   return 1;
+   // std::cout << "new + " <<std::endl;   
 }

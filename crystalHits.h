@@ -23,11 +23,14 @@ public :
    Int_t           fCurrent; //!current Tree number in a TChain
    std::string     method_name; //!
    bool            useStatusCut; //!
-   TDirectory          *output_file; //!
+   TDirectory          *output_file; //![]
    SimpleHistSVC  *histSvc; //!
    double          start_time; //!
    double          end_time; //!
+   double          offset_time; //!
    bool            isXtalHitTree; //!
+   int             timeTag; //!
+
    
 
 
@@ -66,18 +69,19 @@ public :
    TBranch        *b_runNum;   //!
 
    crystalHits(std::string name);   
-   virtual ~crystalHits();
-   virtual Int_t    Cut(Long64_t entry);
+   virtual ~crystalHits();   
    virtual Int_t    GetEntry(Long64_t entry);
    virtual Long64_t LoadTree(Long64_t entry);
    virtual void     Init(TTree *tree);
    virtual void     Loop(int entries_debug=-1);
-   virtual Bool_t   Notify();
-   virtual void     Show(Long64_t entry = -1);
+      
    virtual void     ChangeFile(TTree *tree, TDirectory *file);
    virtual void     WriteToFile();
-   virtual void     FillHists();
-   virtual bool     Cut_time();
+   
+   virtual bool     Cut_laserHit();
+   virtual void     AnaCrystalHits();
+   virtual void     AnaClusteredHits();
+
 };
 
 #endif
