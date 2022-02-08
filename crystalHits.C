@@ -36,7 +36,7 @@ void crystalHits::AnaCrystalHits() {
 void crystalHits::AnaClusteredHits() {
    
    //E-t hist: all calos
-   histSvc->BookFillHist("energy_time",5000*6,0,0.1492*5000,208*3,0,6.24,time*1.25/1.e3,energy/1.e3);
+   histSvc->BookFillHist("energy_time",5000*6,0,0.1492*5000,104*9,0,9.36,time*1.25/1.e3,energy/1.e3);
 
    if(timeTag==2) return;
    
