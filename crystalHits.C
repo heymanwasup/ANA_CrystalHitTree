@@ -3,6 +3,10 @@
 #include <TStyle.h>
 #include <TCanvas.h>
 #include <iostream>
+#include <TRandom3.h>
+
+TRandom3 r;
+
 using namespace std;
 void crystalHits::ChangeFile(TTree * tree, TDirectory * file){
    fChain = tree;
@@ -33,10 +37,15 @@ void crystalHits::AnaCrystalHits() {
    histSvc->BookFillHist("energy",3000,0,3000,energy);
 }
 
+double Randomize(double time) {
+   int sign = 2 * int(r.Integer(2)) -1;    
+   return time + double(sign)*0.1492/2.;   
+}
+
 void crystalHits::AnaClusteredHits() {
    
    //E-t hist: all calos
-   histSvc->BookFillHist("energy_time",5000*6,0,0.1492*5000,104*9,0,9.36,time*1.25/1.e3,energy/1.e3);
+   histSvc->BookFillHist("energy_time",5000*6,0,0.1492*5000,104*9,0,9.36,Randomize(time*1.25/1.e3),energy/1.e3);
 
    if(timeTag==2) return;
    
@@ -48,6 +57,7 @@ void crystalHits::AnaClusteredHits() {
    //Energy spectrum: each calo
    histSvc->SetCaloTag(caloNum);
    histSvc->BookFillHist("energy",4000,0,4000,energy);
+   histSvc->BookFillHist("energy_time",5000*6,0,0.1492*5000,104*9,0,9.36,Randomize(time*1.25/1.e3),energy/1.e3);
 }
 
 void crystalHits::Loop(int entries_debug)
