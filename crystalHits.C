@@ -5,9 +5,12 @@
 #include <iostream>
 #include <TRandom3.h>
 
-TRandom3 r;
+
 
 using namespace std;
+double crystalHits::Randomize(double t) {
+   return t+r->Uniform(-1,1)*0.1492/2;
+}
 void crystalHits::ChangeFile(TTree * tree, TDirectory * file){
    fChain = tree;
    output_file = file;   
@@ -37,17 +40,19 @@ void crystalHits::AnaCrystalHits() {
    histSvc->BookFillHist("energy",3000,0,3000,energy);
 }
 
-double Randomize(double time) {   
-   return time+r.Uniform(-1,1)*0.1492/2;
-}
+
 
 void crystalHits::AnaClusteredHits() {
    
    //E-t hist: all calos
    histSvc->BookFillHist("energy_time",5000*6,0,0.1492*5000,104*9,0,9.36,Randomize(time*1.25/1.e3),energy/1.e3);
 
+   //E-t hist: each calo
+   histSvc->SetCaloTag(caloNum);
+   histSvc->BookFillHist("energy_time",5000*6,0,0.1492*5000,104*9,0,9.36,Randomize(time*1.25/1.e3),energy/1.e3);
+
    if(timeTag==2) return;
-   
+   histSvc->ResetCaloTag();
    histSvc->SetTimeTag(timeTag);
 
    //Energy spectrum: all calos   
@@ -56,7 +61,7 @@ void crystalHits::AnaClusteredHits() {
    //Energy spectrum: each calo
    histSvc->SetCaloTag(caloNum);
    histSvc->BookFillHist("energy",4000,0,4000,energy);
-   histSvc->BookFillHist("energy_time",5000*6,0,0.1492*5000,104*9,0,9.36,Randomize(time*1.25/1.e3),energy/1.e3);
+   
 }
 
 void crystalHits::Loop(int entries_debug)
@@ -155,6 +160,7 @@ crystalHits::~crystalHits()
    if (!fChain) return;
    // delete fChain->GetCurrentFile();
    delete histSvc;
+   delete r;
 }
 
 Int_t crystalHits::GetEntry(Long64_t entry)
@@ -208,5 +214,6 @@ void crystalHits::Init(TTree *tree)
    fChain->SetBranchAddress("runNum", &runNum, &b_runNum);
    // std::cout << "new - " <<std::endl;
    histSvc = new SimpleHistSVC();
+   r = new TRandom3();
    // std::cout << "new + " <<std::endl;   
 }

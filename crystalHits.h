@@ -13,6 +13,7 @@
 #include <TFile.h>
 #include <string>
 #include "SimpleHistSVC.h"
+#include <TRandom3.h>
 
 
 // Header file for the classes stored in the TTree if any.
@@ -30,6 +31,7 @@ public :
    double          offset_time; //!
    bool            isXtalHitTree; //!
    int             timeTag; //!
+   TRandom3*       r; //!
 
    
 
@@ -81,6 +83,7 @@ public :
    virtual bool     Cut_laserHit();
    virtual void     AnaCrystalHits();
    virtual void     AnaClusteredHits();
+   virtual double   Randomize(double t);
 
 };
 

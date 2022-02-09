@@ -30,9 +30,11 @@ class SimpleHistSVC {
         void BookFillHist(std::string name, int nbinsX, float startX, float endX, int nbinsY, float startY, float endY,float x, float y);
         void SetProcessTag(std::string name);
         void SetCaloTag(int caloIndex);
+        void ResetCaloTag();
         void SetXtalTag(int xtalIndex);
         void SetStatusTag(int hitStatus);
         void SetTimeTag(int timeTag);
+        void ResetTimeTag();
         void InitNameTags();
         void Init();
         void BookFile(TDirectory *file);

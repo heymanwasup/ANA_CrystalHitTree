@@ -19,6 +19,10 @@ void SimpleHistSVC::SetCaloTag(int caloIndex) {
     this->caloIndex = caloIndex;
 }
 
+void SimpleHistSVC::ResetCaloTag() {
+    this->caloIndex = default_int;
+}
+
 void SimpleHistSVC::SetXtalTag(int xtalIndex) {
     this->xtalIndex = xtalIndex;
 }
@@ -29,6 +33,10 @@ void SimpleHistSVC::SetStatusTag(int hitStatus) {
 
 void SimpleHistSVC::SetTimeTag(int timeTag) {
     this->timeTag = timeTag;
+}
+
+void SimpleHistSVC::ResetTimeTag() {
+    this->timeTag = default_int;
 }
 
 std::string SimpleHistSVC::GetFullName(std::string name) {
