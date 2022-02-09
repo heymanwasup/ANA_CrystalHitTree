@@ -37,9 +37,8 @@ void crystalHits::AnaCrystalHits() {
    histSvc->BookFillHist("energy",3000,0,3000,energy);
 }
 
-double Randomize(double time) {
-   int sign = 2 * int(r.Integer(2)) -1;    
-   return time + double(sign)*0.1492/2.;   
+double Randomize(double time) {   
+   return time+r.Uniform(-1,1)*0.1492/2;
 }
 
 void crystalHits::AnaClusteredHits() {
