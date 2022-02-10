@@ -48,8 +48,8 @@ void crystalHits::AnaClusteredHits() {
    histSvc->BookFillHist("energy_time",5000*6,0,0.1492*5000,104*9,0,9.36,Randomize(time*1.25/1.e3),energy/1.e3);
 
    //E-t hist: each calo
-   histSvc->SetCaloTag(caloNum);
-   histSvc->BookFillHist("energy_time",5000*6,0,0.1492*5000,104*9,0,9.36,Randomize(time*1.25/1.e3),energy/1.e3);
+   // histSvc->SetCaloTag(caloNum);
+   // histSvc->BookFillHist("energy_time",5000*6,0,0.1492*5000,104*9,0,9.36,Randomize(time*1.25/1.e3),energy/1.e3);
 
    if(timeTag==2) return;
    histSvc->ResetCaloTag();
@@ -160,7 +160,7 @@ crystalHits::~crystalHits()
    if (!fChain) return;
    // delete fChain->GetCurrentFile();
    delete histSvc;
-   delete r;
+   // delete r;
 }
 
 Int_t crystalHits::GetEntry(Long64_t entry)
