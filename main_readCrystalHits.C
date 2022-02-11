@@ -14,13 +14,13 @@ using namespace std;
 
 
 void ShowUsage(string main_exe) {
-    cout << "Usage: \n";    
-    cout << "/Path/to/" << main_exe << " -i input.list -o output.root -hit hit_name -jobs 1,3,5" << endl;    
-    cout << "/Path/to/" << main_exe << " -i input.list -o output.root -hit hit_name" << endl;    
+    cout << "Usage: \n";
+    cout << "/Path/to/" << main_exe << " -i input.list -o output.root -hit hit_name -jobs 1,3,5" << endl;
+    cout << "/Path/to/" << main_exe << " -i input.list -o output.root -hit hit_name" << endl;
 }
 
 map<string,string> parse_argv(int argc,char *argv[]) {
-    map<string,string> config;        
+    map<string,string> config;
     config["jobs"] = "null";
     config["events"] = "-1";
 
