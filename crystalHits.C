@@ -43,13 +43,17 @@ void crystalHits::AnaCrystalHits() {
 
 
 void crystalHits::AnaClusteredHits() {
-   
+
    //E-t hist: all calos
-   histSvc->BookFillHist("energy_time",5000*6,0,0.1492*5000,104*9,0,9.36,Randomize(time*1.25/1.e3),energy/1.e3);
+   // histSvc->BookFillHist("energy_time",5000*6,0,0.1492*5000,104*9,0,9.36,Randomize(time*1.25/1.e3),energy/1.e3);
+
 
    //E-t hist: each calo
    // histSvc->SetCaloTag(caloNum);
    // histSvc->BookFillHist("energy_time",5000*6,0,0.1492*5000,104*9,0,9.36,Randomize(time*1.25/1.e3),energy/1.e3);
+
+   //E-t-calo 3D hist
+   histSvc->BookFillHist("energy_time",5000*6,0,0.1492*5000,468,0,9.36,24,1-0.5,25-0.24,Randomize(time*1.25/1.e3),energy/1.e3,caloNum);
 
    if(timeTag==2) return;
    histSvc->ResetCaloTag();
@@ -61,7 +65,6 @@ void crystalHits::AnaClusteredHits() {
    //Energy spectrum: each calo
    histSvc->SetCaloTag(caloNum);
    histSvc->BookFillHist("energy",4000,0,4000,energy);
-   
 }
 
 void crystalHits::Loop(int entries_debug)

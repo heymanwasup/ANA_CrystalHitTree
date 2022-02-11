@@ -6,9 +6,11 @@ SimpleHistSVC::SimpleHistSVC() :
 {
     Init();
 }
+
 SimpleHistSVC::~SimpleHistSVC() {
     histsDB_1d.clear();
     histsDB_2d.clear();
+    histsDB_3d.clear();
 }
 
 void SimpleHistSVC::SetProcessTag(std::string name) {
@@ -32,7 +34,7 @@ void SimpleHistSVC::SetStatusTag(int hitStatus) {
 }
 
 void SimpleHistSVC::SetTimeTag(int timeTag) {
-    this->timeTag = timeTag;
+    this->timeTag = timeTag; 
 }
 
 void SimpleHistSVC::ResetTimeTag() {
@@ -123,6 +125,21 @@ void SimpleHistSVC::BookFillHist(std::string name, int nbinsX, float startX, flo
     hist->Fill(x,y);
 }
 
+void SimpleHistSVC::BookFillHist(std::string name, int nbinsX, float startX, float endX, int nbinsY, float startY, float endY, int nbinsZ, float startZ, float endZ, float x, float y, float z) {    
+    std::string fullname = GetFullName(name);
+    auto itr = histsDB_3d.find(fullname);
+    TH3F * hist;
+    if(itr == histsDB_3d.end()) {
+        hist = new TH3F(fullname.c_str(),fullname.c_str(),nbinsX,startX,endX,nbinsY,startY,endY,nbinsZ,startZ,endZ);
+        hist->SetDirectory(output_file);
+        histsDB_3d[fullname] = hist;
+    } else {
+        hist = itr->second;
+    }
+    hist->Fill(x,y,z);
+}
+
+
 void SimpleHistSVC::BookFile(TDirectory *file) {
     output_file = file;
 }
@@ -134,7 +151,11 @@ void SimpleHistSVC::Write() {
     
     for(auto itr : histsDB_2d) {
         (itr.second)->Write();        
-    }    
+    }
+
+    for(auto itr : histsDB_3d) {
+        (itr.second)->Write();        
+    }
 }
 
 void SimpleHistSVC::InitNameTags() {
@@ -149,4 +170,5 @@ void SimpleHistSVC::Init() {
     InitNameTags();
     histsDB_1d.clear();    
     histsDB_2d.clear();
+    histsDB_3d.clear();
 }
