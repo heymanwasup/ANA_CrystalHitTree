@@ -45,15 +45,15 @@ void crystalHits::AnaCrystalHits() {
 void crystalHits::AnaClusteredHits() {
 
    //E-t hist: all calos
-   // histSvc->BookFillHist("energy_time",5000*6,0,0.1492*5000,104*9,0,9.36,Randomize(time*1.25/1.e3),energy/1.e3);
+   histSvc->BookFillHist("energy_time",4300*6,0,0.1492*4300,468,0,9.36,Randomize(time*1.25/1.e3),energy/1.e3);
 
 
    //E-t hist: each calo
-   // histSvc->SetCaloTag(caloNum);
-   // histSvc->BookFillHist("energy_time",5000*6,0,0.1492*5000,104*9,0,9.36,Randomize(time*1.25/1.e3),energy/1.e3);
+   histSvc->SetCaloTag(caloNum);
+   histSvc->BookFillHist("energy_time",4300*6,0,0.1492*4300,468,0,9.36,Randomize(time*1.25/1.e3),energy/1.e3);
 
    //E-t-calo 3D hist
-   histSvc->BookFillHist("energy_time",5000*6,0,0.1492*5000,468,0,9.36,24,1-0.5,25-0.24,Randomize(time*1.25/1.e3),energy/1.e3,caloNum);
+   // histSvc->BookFillHist("energy_time",5000*6,0,0.1492*5000,468,0,9.36,24,1-0.5,25-0.24,Randomize(time*1.25/1.e3),energy/1.e3,caloNum);
 
    if(timeTag==2) return;
    histSvc->ResetCaloTag();
@@ -172,6 +172,7 @@ Int_t crystalHits::GetEntry(Long64_t entry)
    if (!fChain) return 0;
    return fChain->GetEntry(entry);
 }
+
 Long64_t crystalHits::LoadTree(Long64_t entry)
 {
 // Set the environment to read one entry

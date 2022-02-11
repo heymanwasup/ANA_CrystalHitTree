@@ -42,8 +42,5 @@ class SimpleHistSVC {
         void Init();
         void BookFile(TDirectory *file);
         void Write();
-
-        
-
 };
 #endif
