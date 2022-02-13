@@ -146,13 +146,15 @@ void SimpleHistSVC::BookFile(TDirectory *file) {
 
 void SimpleHistSVC::Write() {
     for(auto itr : histsDB_1d) {
+        std::cout << "write "<< itr.first << std::endl;
         (itr.second)->Write();
     }
     
     for(auto itr : histsDB_2d) {
+        std::cout << "write "<< itr.first << std::endl;
         (itr.second)->Write();        
     }
-
+    std::cout<<"finished write"<<std::endl;
     // for(auto itr : histsDB_3d) {
     //     (itr.second)->Write();        
     // }
