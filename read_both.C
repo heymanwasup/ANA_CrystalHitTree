@@ -150,6 +150,7 @@ int main(int argc,char *argv[]) {
     analyser.WriteToFile();
     cout<<"finished "<<config["hit_name"]<<endl;
     // dir->Close();
-
+    output_file->Close();
+    cout<<"closed file"<<endl;
     return 0;
 }
