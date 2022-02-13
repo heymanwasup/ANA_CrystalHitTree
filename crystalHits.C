@@ -161,10 +161,14 @@ crystalHits::crystalHits(std::string name) :
 
 crystalHits::~crystalHits()
 {
+
    if (!fChain) return;
+   std::cout<<"in ~crystalHits()"<<std::endl;
    // delete fChain->GetCurrentFile();
    delete histSvc;
+   std::cout<<"pre r"<<std::endl;
    delete r;
+   std::cout<<"post r"<<std::endl;
 }
 
 Int_t crystalHits::GetEntry(Long64_t entry)

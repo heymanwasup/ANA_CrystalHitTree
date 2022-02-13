@@ -8,9 +8,11 @@ SimpleHistSVC::SimpleHistSVC() :
 }
 
 SimpleHistSVC::~SimpleHistSVC() {
+    std::cout<<"in ~SimpleHistSVC()"<<std::endl;
     histsDB_1d.clear();
     histsDB_2d.clear();
     // histsDB_3d.clear();
+    std::cout<<"out ~SimpleHistSVC()"<<std::endl;
 }
 
 void SimpleHistSVC::SetProcessTag(std::string name) {
