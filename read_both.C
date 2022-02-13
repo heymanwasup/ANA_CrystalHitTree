@@ -131,7 +131,7 @@ int main(int argc,char *argv[]) {
         cout <<"adding: "<<file_path<<endl;
     }
 
-    //Book analyses and TTree    
+    //Book analyses and TTree
     TFile * output_file = new TFile(config["output_file"].c_str(),"RECREATE");
     TDirectory * dir = output_file->mkdir(config["hit_name"].c_str());
 
