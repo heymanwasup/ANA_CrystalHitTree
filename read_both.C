@@ -121,7 +121,7 @@ int main(int argc,char *argv[]) {
         dir->cd();
         hist->SetDirectory(dir);
         hist->Write();
-        dir->Close();
+        output_file->Close();
         return 0;
     }
 
