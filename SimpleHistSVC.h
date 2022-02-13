@@ -5,13 +5,13 @@
 #include <TFile.h>
 #include <TH1F.h>
 #include <TH2F.h>
-#include <TH3F.h>
+// #include <TH3F.h>
 
 class SimpleHistSVC {
     protected:
         std::map<std::string,TH1F *> histsDB_1d;
         std::map<std::string,TH2F *> histsDB_2d;
-        std::map<std::string,TH3F *> histsDB_3d;
+        // std::map<std::string,TH3F *> histsDB_3d;
         std::string processName;
         int caloIndex;
         int xtalIndex;
@@ -30,7 +30,7 @@ class SimpleHistSVC {
         ~SimpleHistSVC();
         void BookFillHist(std::string name, int nbins, float start, float end, float value);
         void BookFillHist(std::string name, int nbinsX, float startX, float endX, int nbinsY, float startY, float endY,float x, float y);
-        void BookFillHist(std::string name, int nbinsX, float startX, float endX, int nbinsY, float startY, float endY,int nbinsZ, float startZ, float endZ, float x, float y, float z);
+        // void BookFillHist(std::string name, int nbinsX, float startX, float endX, int nbinsY, float startY, float endY,int nbinsZ, float startZ, float endZ, float x, float y, float z);
         void SetProcessTag(std::string name);
         void SetCaloTag(int caloIndex);
         void ResetCaloTag();

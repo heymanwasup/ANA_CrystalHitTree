@@ -163,7 +163,7 @@ crystalHits::~crystalHits()
    if (!fChain) return;
    // delete fChain->GetCurrentFile();
    delete histSvc;
-   // delete r;
+   delete r;
 }
 
 Int_t crystalHits::GetEntry(Long64_t entry)

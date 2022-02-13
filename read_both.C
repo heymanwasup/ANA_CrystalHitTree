@@ -90,7 +90,7 @@ int main(int argc,char *argv[]) {
          }     
          list_of_files.push_back(str);
          // cout <<"got "<< str << endl;
-        }    
+        }
     }
 
 
