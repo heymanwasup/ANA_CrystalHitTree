@@ -8,11 +8,9 @@ SimpleHistSVC::SimpleHistSVC() :
 }
 
 SimpleHistSVC::~SimpleHistSVC() {
-    std::cout<<"in ~SimpleHistSVC()"<<std::endl;
     histsDB_1d.clear();
     histsDB_2d.clear();
-    // histsDB_3d.clear();
-    std::cout<<"out ~SimpleHistSVC()"<<std::endl;
+    // histsDB_3d.clear();    
 }
 
 void SimpleHistSVC::SetProcessTag(std::string name) {
@@ -148,15 +146,15 @@ void SimpleHistSVC::BookFile(TDirectory *file) {
 
 void SimpleHistSVC::Write() {
     for(auto itr : histsDB_1d) {
-        std::cout << "write "<< itr.first << std::endl;
+        // std::cout << "write "<< itr.first << std::endl;
         (itr.second)->Write();
     }
     
     for(auto itr : histsDB_2d) {
-        std::cout << "write "<< itr.first << std::endl;
+        // std::cout << "write "<< itr.first << std::endl;
         (itr.second)->Write();        
     }
-    std::cout<<"finished write"<<std::endl;
+    // std::cout<<"finished write"<<std::endl;
     // for(auto itr : histsDB_3d) {
     //     (itr.second)->Write();        
     // }

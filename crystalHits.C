@@ -21,8 +21,7 @@ void crystalHits::ChangeFile(TTree * tree, TDirectory * file){
 
 void crystalHits::WriteToFile() {
    histSvc->Write();
-   // delete histSvc;
-   cout << "write to file finished"<<endl;
+   // delete histSvc;   
 }
 
 void crystalHits::AnaCrystalHits() {
@@ -162,13 +161,10 @@ crystalHits::crystalHits(std::string name) :
 crystalHits::~crystalHits()
 {
 
-   if (!fChain) return;
-   std::cout<<"in ~crystalHits()"<<std::endl;
+   if (!fChain) return;   
    // delete fChain->GetCurrentFile();
-   delete histSvc;
-   std::cout<<"pre r"<<std::endl;
-   delete r;
-   std::cout<<"post r"<<std::endl;
+   delete histSvc;   
+   delete r;   
 }
 
 Int_t crystalHits::GetEntry(Long64_t entry)
@@ -221,8 +217,7 @@ void crystalHits::Init(TTree *tree)
    fChain->SetBranchAddress("eventNum", &eventNum, &b_eventNum);
    fChain->SetBranchAddress("subRunNum", &subRunNum, &b_subRunNum);
    fChain->SetBranchAddress("runNum", &runNum, &b_runNum);
-   // std::cout << "new - " <<std::endl;
+
    histSvc = new SimpleHistSVC();
    r = new TRandom3();
-   // std::cout << "new + " <<std::endl;   
 }
