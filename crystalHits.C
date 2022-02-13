@@ -22,6 +22,7 @@ void crystalHits::ChangeFile(TTree * tree, TDirectory * file){
 void crystalHits::WriteToFile() {
    histSvc->Write();
    // delete histSvc;
+   cout << "write to file finished"<<endl;
 }
 
 void crystalHits::AnaCrystalHits() {

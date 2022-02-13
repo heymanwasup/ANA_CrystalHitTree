@@ -148,7 +148,8 @@ int main(int argc,char *argv[]) {
     analyser.ChangeFile(fChain,dir);
     analyser.Loop(entries_debug);
     analyser.WriteToFile();
-    dir->Close();
+    cout<<"finished "<<config["hit_name"]<<endl;
+    // dir->Close();
 
     return 0;
 }
