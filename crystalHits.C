@@ -67,6 +67,8 @@ void crystalHits::AnaClusteredHits() {
    histSvc->BookFillHist("energy",4000,0,4000,energy);
 }
 
+
+
 void crystalHits::Loop(int entries_debug)
 {
    if (fChain == 0) return;   
@@ -112,6 +114,70 @@ void crystalHits::Loop(int entries_debug)
       else {
          AnaClusteredHits();
       }
+   }
+}
+
+
+void crystalHits::Loop_checkIsland(int entries_debug)
+{
+   if (fChain == 0) return;   
+   
+   Long64_t nentries = fChain->GetEntriesFast();      
+   if(entries_debug!=-1){
+      nentries = entries_debug;
+   }
+   
+   Long64_t nbytes = 0, nb = 0;
+
+   std::string histName;
+   
+   map<int,map<int,vector<int>> >island_energies;
+   
+
+   for (Long64_t jentry=0; jentry<nentries;jentry++) {
+
+      Long64_t ientry = LoadTree(jentry);
+
+      if (ientry < 0) break;
+      nb = fChain->GetEntry(jentry);   nbytes += nb;
+      if (jentry%100000==0) std::cout << "processed " << jentry << " events" << std::endl;
+      
+      //exclude the laser hits
+      if(!Cut_laserHit()) continue;
+
+      double time_range = time*1.25-offset_time;
+      if(time_range<10.e3) {
+         timeTag = 1;
+      }
+      else if(time_range<30.e3) {
+         timeTag = 2;  
+      }
+      else {
+         timeTag = 3;
+      }
+
+      if(timeTag==1 && caloNum==1 && xtalNum==8) {
+         // cout << "islandNum " << islandNum  << " time (ns) "<< time_range << " energy " << energy << endl;
+         if(island_energies.find(eventNum)!=island_energies.end()) {
+            island_energies[eventNum] = map<int,vector<int>>();            
+         }
+         if(island_energies[eventNum].find(islandNum)!=island_energies[eventNum].end()) {
+            island_energies[eventNum][islandNum] = vector<int>();            
+         }
+         island_energies[eventNum][islandNum].push_back(energy);
+      }
+   }
+
+   for(auto event : island_energies) {
+      cout << event.first << " ";
+      for(auto island_e : event.second) {
+         cout <<island_e.first<<" ";
+         for(auto e : island_e.second){
+            cout << " "<< e;
+         }
+         cout << endl;   
+      }
+      
    }
 }
 

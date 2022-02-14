@@ -76,6 +76,7 @@ public :
    virtual Long64_t LoadTree(Long64_t entry);
    virtual void     Init(TTree *tree);
    virtual void     Loop(int entries_debug=-1);
+   virtual void     Loop_checkIsland(int entries_debug=-1);
       
    virtual void     ChangeFile(TTree *tree, TDirectory *file);
    virtual void     WriteToFile();

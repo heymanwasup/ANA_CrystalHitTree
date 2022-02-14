@@ -23,8 +23,9 @@ map<string,string> parse_argv(int argc,char *argv[]) {
     map<string,string> config;
     config["jobs"] = "null";
     config["events"] = "-1";
+    config["ana"] = "main";
 
-    map<string,string> name_map = {{"-i","input_list"},{"-o","output_file"},{"-hit","hit_name"},{"-jobs","jobs"},{"-events","events"}};
+    map<string,string> name_map = {{"-i","input_list"},{"-o","output_file"},{"-hit","hit_name"},{"-jobs","jobs"},{"-events","events"},{"-ana","ana"}};
     int n_arg = 1;
     while(n_arg<argc){
         if(name_map.find(argv[n_arg])!=name_map.end()){
@@ -146,11 +147,14 @@ int main(int argc,char *argv[]) {
     analyser.useStatusCut = useStatusCut;
     dir->cd();
     analyser.ChangeFile(fChain,dir);
-    analyser.Loop(entries_debug);
-    analyser.WriteToFile();
-    cout<<"finished "<<config["hit_name"]<<endl;
-    // dir->Close();
+    if(config["ana"]=="main") {
+        analyser.Loop(entries_debug);    
+        analyser.WriteToFile();
+    }
+    else if(config["ana"]=="checkIsland") {
+        analyser.Loop_checkIsland(entries_debug);
+    }
+    cout<<"finished "<<config["hit_name"]<<endl;    
     output_file->Close();
-    cout<<"closed file"<<endl;
     return 0;
 }
